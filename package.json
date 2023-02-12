@@ -1,0 +1,15 @@
+{
+  "name": "svelte-catolico-orante",
+  "version": "1.0.0",
+  "description": "",
+  "license": "MIT",
+  "author": "Matheus Lopes <inolopesm@gmail.com>",
+  "repository": "github:inolopesm/svelte-catolico-orante",
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": "18",
+    "npm": "8"
+  }
+}
