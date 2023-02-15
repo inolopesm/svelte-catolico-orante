@@ -1,113 +1,77 @@
 <script lang="ts">
-  let modal = "";
+  import type { ComponentType } from "svelte";
+  import Header from "./components/Header.svelte";
+  import Link from "./components/Link.svelte";
+  import AveMaria from "./components/prayers/AveMaria.svelte";
+  import CordeiroDeDeus from "./components/prayers/CordeiroDeDeus.svelte";
+  import Credo from "./components/prayers/Credo.svelte";
+  import GloriaAoPai from "./components/prayers/GloriaAoPai.svelte";
+  import GloriaDeusNasAlturas from "./components/prayers/GloriaDeusNasAlturas.svelte";
+  import PaiNosso from "./components/prayers/PaiNosso.svelte";
+  import SalveRainha from "./components/prayers/SalveRainha.svelte";
+  import SantoAnjo from "./components/prayers/SantoAnjo.svelte";
+  import SinalDaCruz from "./components/prayers/SinalDaCruz.svelte";
+  import VindeEspiritoSanto from "./components/prayers/VindeEspiritoSanto.svelte";
 
-  const openModal = (key: string) => () => {
-    modal = key;
+  type Prayer = {
+    label: string;
+    Component: ComponentType;
   };
 
-  const closeModal = () => {
-    modal = "";
+  const prayers: Prayer[] = [
+    { label: "Ave Maria", Component: AveMaria },
+    { label: "Cordeiro de Deus", Component: CordeiroDeDeus },
+    { label: "Credo", Component: Credo },
+    { label: "Gloria a Deus nas alturas", Component: GloriaDeusNasAlturas },
+    { label: "Glória ao Pai", Component: GloriaAoPai },
+    { label: "Pai Nosso", Component: PaiNosso },
+    { label: "Salve Rainha", Component: SalveRainha },
+    { label: "Santo Anjo", Component: SantoAnjo },
+    { label: "Sinal da Cruz", Component: SinalDaCruz },
+    { label: "Vinde Espírito Santo", Component: VindeEspiritoSanto },
+  ];
+
+  let selectedPrayer: Prayer | null = null;
+
+  const openPrayerModal = (prayer: Prayer) => () => {
+    selectedPrayer = prayer;
+  };
+
+  const closePrayerModal = () => {
+    selectedPrayer = null;
   };
 </script>
 
 <main class="bg-gray-100 h-screen text-gray-900">
-  <section class="bg-gray-50 shadow-md mb-10">
-    <div class="container mx-auto p-4">
-      <h1 class="text-xl">Católico Orante</h1>
-    </div>
-  </section>
+  <Header />
   <section class="container mx-auto p-4">
     <div class="bg-gray-50 p-4 rounded shadow">
       <h2 class="text-2xl font-bold mb-2">Orações</h2>
       <h3 class="text-lg font-bold mb-2">Comuns</h3>
       <ul class="list-disc list-inside flex flex-col gap-1">
-        <li>
-          <button
-            class="text-blue-400 hover:underline"
-            on:click={openModal("ave-maria")}
-          >
-            Ave Maria
-          </button>
-        </li>
-        <li>
-          <button
-            class="text-blue-400 hover:underline"
-            on:click={openModal("cordeiro-de-deus")}
-          >
-            Cordeiro de Deus
-          </button>
-        </li>
-        <li>
-          <button class="text-blue-400 hover:underline">
-            Credo
-          </button>
-        </li>
-        <li>
-          <button class="text-blue-400 hover:underline">
-            Glória a Deus nas alturas
-          </button>
-        </li>
-        <li>
-          <button class="text-blue-400 hover:underline">
-            Glória ao Pai
-          </button>
-        </li>
-        <li>
-          <button class="text-blue-400 hover:underline">
-            Pai Nosso
-          </button>
-        </li>
-        <li>
-          <button class="text-blue-400 hover:underline">
-            Salve Rainha
-          </button>
-        </li>
-        <li>
-          <button class="text-blue-400 hover:underline">
-            Santo Anjo
-          </button>
-        </li>
-        <li>
-          <button class="text-blue-400 hover:underline">
-            Sinal da Cruz
-          </button>
-        </li>
-        <li>
-          <button class="text-blue-400 hover:underline">
-            Vinde Espírito Santo
-          </button>
-        </li>
+        {#each prayers as prayer}
+          <li>
+            <Link on:click={openPrayerModal(prayer)}>
+              {prayer.label}
+            </Link>
+          </li>
+        {/each}
       </ul>
     </div>
   </section>
 
-  <div class={`fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center ${modal ? "visible" : "invisible"}`}>
+  <div class={`fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center ${selectedPrayer ? "visible" : "invisible"}`}>
     <dialog
       class="bg-gray-50 w-4/5 max-w-sm shadow-lg box-content"
-      open={!!modal}
+      open={!!selectedPrayer}
     >
-      <div class={modal === "ave-maria" ? "block" : "hidden"}>
-        <h2 class="text-2xl font-bold mb-2">Ave Maria</h2>
-        <p>
-          Ave Maria, cheia de graça, o Senhor é convosco, bendita sois vós entre as
-          mulheres e bendito é o fruto do vosso ventre, Jesus. Santa Maria, Mãe de
-          Deus, rogai por nós pecadores, agora e na hora da nossa morte. Amém
-        </p>
-      </div>
-      <div class={modal === "cordeiro-de-deus" ? "block" : "hidden"}>
-        <h2 class="text-2xl font-bold mb-2">Cordeiro de Deus</h2>
-        <p>
-          Cordeiro de Deus, que tirais o pecado do mundo, tende piedade de
-          nós.<br />
-          Cordeiro de Deus, que tirais o pecado do mundo, tende piedade de
-          nós.<br />
-          Cordeiro de Deus, que tirais o pecado do mundo, dai-nos a paz.
-        </p>
-      </div>
+      {#each prayers as { label, Component }}
+        <Component class={selectedPrayer?.label === label ? "block" : "hidden"} />
+      {/each}
       <footer class="flex justify-end">
         <button
           class="px-4 py-2 text-blue-400 hover:underline"
-          on:click={closeModal}
+          on:click={closePrayerModal}
         >
           Ok
         </button>
