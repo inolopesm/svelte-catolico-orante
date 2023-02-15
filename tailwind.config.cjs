@@ -4,7 +4,9 @@ module.exports = {
     "./src/**/*.svelte"
   ],
   theme: {
-    extend: {},
+    fontFamily: {
+      'sans': ['Roboto', 'sans-serif'],
+    },
   },
   plugins: [],
 }
