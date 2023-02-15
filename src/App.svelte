@@ -1,45 +1,17 @@
 <script lang="ts">
-  import type { ComponentType } from "svelte";
+  import Button from "./components/Button.svelte";
+  import Dialog from "./components/Dialog.svelte";
+  import DialogActions from "./components/DialogActions.svelte";
+  import DialogTitle from "./components/DialogTitle.svelte";
   import Header from "./components/Header.svelte";
   import Link from "./components/Link.svelte";
-  import AveMaria from "./components/prayers/AveMaria.svelte";
-  import CordeiroDeDeus from "./components/prayers/CordeiroDeDeus.svelte";
-  import Credo from "./components/prayers/Credo.svelte";
-  import GloriaAoPai from "./components/prayers/GloriaAoPai.svelte";
-  import GloriaDeusNasAlturas from "./components/prayers/GloriaDeusNasAlturas.svelte";
-  import PaiNosso from "./components/prayers/PaiNosso.svelte";
-  import SalveRainha from "./components/prayers/SalveRainha.svelte";
-  import SantoAnjo from "./components/prayers/SantoAnjo.svelte";
-  import SinalDaCruz from "./components/prayers/SinalDaCruz.svelte";
-  import VindeEspiritoSanto from "./components/prayers/VindeEspiritoSanto.svelte";
+  import prayers from "./data/prayers.json";
+  import DialogContent from "./components/DialogContent.svelte";
+  import type { Unpack } from "./utils/typescript"
 
-  type Prayer = {
-    label: string;
-    Component: ComponentType;
-  };
-
-  const prayers: Prayer[] = [
-    { label: "Ave Maria", Component: AveMaria },
-    { label: "Cordeiro de Deus", Component: CordeiroDeDeus },
-    { label: "Credo", Component: Credo },
-    { label: "Gloria a Deus nas alturas", Component: GloriaDeusNasAlturas },
-    { label: "Glória ao Pai", Component: GloriaAoPai },
-    { label: "Pai Nosso", Component: PaiNosso },
-    { label: "Salve Rainha", Component: SalveRainha },
-    { label: "Santo Anjo", Component: SantoAnjo },
-    { label: "Sinal da Cruz", Component: SinalDaCruz },
-    { label: "Vinde Espírito Santo", Component: VindeEspiritoSanto },
-  ];
+  type Prayer = Unpack<typeof prayers>;
 
   let selectedPrayer: Prayer | null = null;
-
-  const openPrayerModal = (prayer: Prayer) => () => {
-    selectedPrayer = prayer;
-  };
-
-  const closePrayerModal = () => {
-    selectedPrayer = null;
-  };
 </script>
 
 <main class="bg-gray-100 h-screen text-gray-900">
@@ -51,7 +23,7 @@
       <ul class="list-disc list-inside flex flex-col gap-1">
         {#each prayers as prayer}
           <li>
-            <Link on:click={openPrayerModal(prayer)}>
+            <Link on:click={() => { selectedPrayer = prayer }}>
               {prayer.label}
             </Link>
           </li>
@@ -60,22 +32,19 @@
     </div>
   </section>
 
-  <div class={`fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center ${selectedPrayer ? "visible" : "invisible"}`}>
-    <dialog
-      class="bg-gray-50 w-4/5 max-w-sm shadow-lg box-content"
-      open={!!selectedPrayer}
-    >
-      {#each prayers as { label, Component }}
-        <Component class={selectedPrayer?.label === label ? "block" : "hidden"} />
-      {/each}
-      <footer class="flex justify-end">
-        <button
-          class="px-4 py-2 text-blue-400 hover:underline"
-          on:click={closePrayerModal}
-        >
+  {#if selectedPrayer !== null}
+    <Dialog open>
+      <DialogTitle>
+        {selectedPrayer.label}
+      </DialogTitle>
+      <DialogContent>
+        {@html selectedPrayer.content}
+      </DialogContent>
+      <DialogActions>
+        <Button on:click={() => { selectedPrayer = null }}>
           Ok
-        </button>
-      </footer>
-    </dialog>
-  </div>
+        </Button>
+      </DialogActions>
+    </Dialog>
+  {/if}
 </main>
